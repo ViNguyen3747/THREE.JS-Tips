@@ -1,5 +1,7 @@
 # Three.js Tips
 
+## MONITORING
+
 ### 1. Monitor FPS
 
 Install stats.js
@@ -44,6 +46,8 @@ cube.geometry.dispose();
 cube.material.dispose();
 ```
 
+## LIGHTS
+
 ### 4. Avoid using Lights
 
 Avoid using Three.js Lights, Use baked lights or cheap lights [AmbienrLight](https://threejs.org/docs/#api/en/lights/AmbientLight), [DirectionalLight](https://threejs.org/docs/#api/en/lights/DirectionalLight)
@@ -51,6 +55,8 @@ Avoid using Three.js Lights, Use baked lights or cheap lights [AmbienrLight](htt
 ### 5. Avoid adding or Removing Lights
 
 When you add or remove light from the scene, all the materials supporting lights will have to be recompiled.
+
+## SHADOWS
 
 ### 6. Avoid using Shadows, use BAKED shadows instead
 
@@ -96,6 +102,8 @@ renderer.shadowMap.autoUpdate = false;
 renderer.shadowMap.needsUpdate = true;
 ```
 
+## TEXTURES
+
 ### 10. Resize textures
 
 reduce the **resolution** to the minimum
@@ -109,6 +117,8 @@ very very important for **mipmaps**
 for .jpg and .png, [tinyPNG](https://tinypng.com/)
 
 you can use [.basis](https://github.com/BinomialLLC/basis_universal), much better but harder to generate
+
+## GEOMETRIES
 
 ### 13. DO NOT update vertices
 
@@ -169,6 +179,8 @@ const mesh = new THREE.Mesh(mergedGeometry, material);
 scene.add(mesh);
 ```
 
+## MATERIALS
+
 ### 16. Mutualize materials
 
 ```javascript
@@ -191,6 +203,8 @@ for (let i = 0; i < 50; i++) {
 ### 17. use cheap materials
 
 [MeshBasicMaterial](https://threejs.org/docs/#api/en/materials/MeshBasicMaterial), [MeshLamberMaterial](https://threejs.org/docs/#api/en/materials/MeshLambertMaterial), [MeshPhongMaterial](https://threejs.org/docs/#api/en/materials/MeshPhongMaterial)
+
+## MESHES
 
 ### 18. InstancedMesh
 
@@ -228,4 +242,117 @@ for (let i = 0; i < 50; i++) {
 
   mesh.setMatrixAt(i, matrix);
 }
+
+const tick = () => {
+  //...
+
+  //add this to change matrices after frames.
+  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+};
 ```
+
+## MODELS
+
+### 19. Low Poly
+
+use low poly models. The fewer polygons, the better. To add details, use **normal maps**
+
+### 20. Draco compression
+
+If the model has a lot of details with very complex geometries, use the Draco compression. It can reduce weight drastically. The drawbacks are a potential freeze when uncompressing the geometry, and you also have to load the Draco libraries.
+
+### 21. Gzip
+
+Gzip is a compression happening on the server side. Most of the servers don't gzip files such as .glb, .gltf, .obj, etc.
+
+## CAMERAS
+
+### 22. Field of view
+
+When objects are not in the field of view, they won't be rendered. That is called **frustum culling**.
+
+reduce the camera's field of view. The fewer objects on the screen, the fewer triangles to render.
+
+### 23. Near and far
+
+you can reduce the **near** and **far** properties of the camera. If you have a vast world with mountains, trees, structures, etc., the user probably can't see those small houses out of sight far behind the mountains. Reduce the **far** to a decent value and those houses won't even try to be rendered.
+
+## RENDERER
+
+### 24. limit Pixel Ratio
+
+```Javascript
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+```
+
+### 25. Antialias
+
+The default antialias is performant, but still, it's less performant than no antialias. Only add it if you have **visible aliasing** and **no performance issue**.
+
+## POSTPROCESSING
+
+### 26. Limit Passes
+
+Each post-processing pass will take as many pixels as the render's resolution (including the pixel ratio) to render. If you have a **1920x1080** resolution with 4 passes and a pixel ratio of **2**, that makes **1920 _ 2 _ 1080 _ 2 _ 4 = 33 177 600** pixels to render. Be reasonable, and try to regroup your custom passes into one.
+
+## Shaders
+
+### 27. Specify the precision
+
+```javascript
+const shaderMaterial = new THREE.ShaderMaterial({
+  precision: "lowp",
+  // ...
+});
+```
+
+### 28. Keep code simple in shader files
+
+AVOID using **if** statement, use **clamp**
+
+```javascript
+modelPosition.y += clamp(elevation, 0.5, 1.0) * uDisplacementStrength;
+```
+
+Or as in the fragment shader, instead of these complex formulas for **r**, **g** and **b**:
+
+```javascript
+vec3 depthColor = vec3(1.0, 0.1, 0.1);
+vec3 surfaceColor = vec3(0.1, 0.0, 0.5);
+vec3 finalColor = mix(depthColor, surfaceColor, elevation);
+```
+
+### 29. use Textures
+
+Perlin noise is bad for performance, unless you want to be able to animate it
+Otherwise, you could use **texture2D()** and produce texture with tools like photoshop :)
+
+### 30. Use Defines
+
+if the values is not supposed to change, use **define** instead of **uniforms**
+
+In vertex shader
+
+```
+#define uDisplacementStrength 1.5
+```
+
+Or in Script.js
+
+```javascript
+const shaderMaterial = new THREE.ShaderMaterial({
+
+    // ...
+
+    defines:
+    {
+        uDisplacementStrength: 1.5
+    },
+
+    // ...
+}
+```
+
+### 31. DO CALCULATIONS in Vertex Shader as possible
+
+then send the result to **Fragment shader**
