@@ -1,5 +1,7 @@
 # Three.js Tips
 
+!!! Keep an eye on the performances from the start and test on other devices, fix any strange behavior before going further
+
 ## MONITORING
 
 ### 1. Monitor FPS
