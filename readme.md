@@ -2,6 +2,8 @@
 
 !!! Keep an eye on the performances from the start and test on other devices, fix any strange behavior before going further
 
+More [Tips and Tricks](https://discoverthreejs.com/tips-and-tricks/)
+
 ## MONITORING
 
 ### 1. Monitor FPS
