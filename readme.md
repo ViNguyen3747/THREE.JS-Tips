@@ -1,17 +1,40 @@
 # Three.js Tips
 
-## Setup
+## Monitoring
 
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
+### Monitor FPS
 
-```bash
-# Install dependencies (only the first time)
-npm install
+Install stats.js
 
-# Run the local server at localhost:8080
-npm run dev
+```
+npm install --save stats.js
+```
 
-# Build for production in the dist/ directory
-npm run build
+add to Script.js
+
+```
+import Stats from 'stats.js'
+
+const stats = new Stats()
+stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom)
+```
+
+In tick() fnc
+
+```
+const tick = () =>
+{
+    stats.begin()
+
+    // ...
+
+    stats.end()
+}
+```
+
+### Renderer informations
+
+```
+console.log(renderer.info)
 ```
