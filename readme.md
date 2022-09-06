@@ -299,7 +299,7 @@ The default antialias is performant, but still, it's less performant than no ant
 
 Each post-processing pass will take as many pixels as the render's resolution (including the pixel ratio) to render. If you have a **1920x1080** resolution with 4 passes and a pixel ratio of **2**, that makes **1920 _ 2 _ 1080 _ 2 _ 4 = 33 177 600** pixels to render. Be reasonable, and try to regroup your custom passes into one.
 
-## Shaders
+## SHADERS
 
 ### 27. Specify the precision
 
@@ -360,3 +360,14 @@ const shaderMaterial = new THREE.ShaderMaterial({
 ### 31. DO CALCULATIONS in Vertex Shader as possible
 
 then send the result to **Fragment shader**
+
+## EXPORT FROM BLENDER
+
+### 32. WHEN UNWRAPPING MODELS, DELETE HIDDEN FACES AND APPLY SCALE (CTRL A + SCALE)
+
+### 33. MERGE MODELS INTO 1 FOR PERFORMANCE
+
+Create new collection "merged"
+Select all models (except emissions if have ones)
+Duplicate with Shift D, press M and move to "merged"
+Select all models in merged then CTRL + J
